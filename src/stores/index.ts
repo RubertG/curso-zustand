@@ -1,0 +1,1 @@
+export * from './beards/beards.store'
