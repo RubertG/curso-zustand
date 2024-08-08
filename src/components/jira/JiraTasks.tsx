@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const JiraTasks = ({ title, tasks, status }: Props) => {
-  const { handleDragLeave, handleDragOver, handleDrop, hanldeAddTask, isDragging, onDragOver } = useTasks(status)
+  const { handleDragLeave, handleDragOver, handleDrop, hanldeAddTask, isDragging, onDragOver } = useTasks({ status })
 
   return (
     <div

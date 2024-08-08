@@ -3,7 +3,11 @@ import Swal from "sweetalert2"
 import { TaskStatus } from "../interfaces"
 import { useTaskStore } from "../stores/tasks/task.store"
 
-export const useTasks = (status: TaskStatus) => {
+interface Options {
+  status: TaskStatus
+}
+
+export const useTasks = ({ status }: Options) => {
   const isDragging = useTaskStore((state) => !!state.draggingTaskId)
   const onTaskDrop = useTaskStore((state) => state.onTaskDrop)
   const addTask = useTaskStore((state) => state.addTask)
