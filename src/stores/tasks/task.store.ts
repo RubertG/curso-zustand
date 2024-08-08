@@ -1,7 +1,9 @@
 import { create, StateCreator } from "zustand";
 import { Task, TaskStatus } from "../../interfaces";
 import { devtools } from "zustand/middleware";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import { immer } from "zustand/middleware/immer";
+// import { produce } from "immer";
 
 interface TaskState {
   draggingTaskId?: string
@@ -16,7 +18,7 @@ interface TaskState {
   onTaskDrop: (status: TaskStatus) => void
 }
 
-const storeApi: StateCreator<TaskState> = (set, get) => ({
+const storeApi: StateCreator<TaskState, [["zustand/immer", never]], [["zustand/devtools", never]]> = (set, get) => ({
   tasks: {
     "ABC-1": {
       id: "ABC-1",
@@ -50,12 +52,23 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
       title,
       status
     }
-    set(state => ({
+
+    set(state => {
+      state.tasks[newTask.id] = newTask
+    })
+
+    // con dependecia produce
+    /* set(produce((state: TaskState) => {
+      state.tasks[newTask.id] = newTask
+    })) */
+
+    // forma nativa
+    /* set(state => ({
       tasks: {
         ...state.tasks,
         [newTask.id]: newTask
       }
-    }))
+    })) */
   },
 
   setDraggingTaskId: (taskId: string) => {
@@ -65,17 +78,21 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
     set({ draggingTaskId: undefined })
   },
   changeTaskStatus: (taskId: string, status: TaskStatus) => {
-    const task = get().tasks[taskId]
-    task.status = status
-    
-    if (task) {
-      set(state =>  ({
-        tasks: {
-          ...state.tasks,
-          [taskId]: task
-        }
-      }))
-    }
+    /* const task = get().tasks[taskId]
+    task.status = status */
+
+    set(state => {
+      state.tasks[taskId] = {
+        ...state.tasks[taskId],
+        status
+      }
+    })
+    /* set(state => ({
+      tasks: {
+        ...state.tasks,
+        [taskId]: task
+      }
+    })) */
   },
   onTaskDrop: (status: TaskStatus) => {
     const taskId = get().draggingTaskId
@@ -89,6 +106,8 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
 
 export const useTaskStore = create<TaskState>()(
   devtools(
-    storeApi
+    immer( // cambia el funcionamiento del set
+      storeApi
+    )
   )
 )
