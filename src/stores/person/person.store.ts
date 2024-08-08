@@ -1,6 +1,5 @@
 import { create, type StateCreator } from "zustand"
-import { devtools, persist } from "zustand/middleware"
-import { firebaseStorage } from "../storages/firebase-storage.store"
+import { persist } from "zustand/middleware"
 
 interface PersonState {
   firstName: string
@@ -21,13 +20,13 @@ const store: StateCreator<PersonState & Actions, [["zustand/devtools", never]]> 
 })
 
 export const usePersonStore = create<PersonState & Actions>()(
-  devtools(
+  // devtools(
     persist(
       store,
       {
         name: 'person-storage',
-        storage: firebaseStorage
+        // storage: firebaseStorage
       }
     )
-  )
+  // )
 )
