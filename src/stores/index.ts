@@ -1,2 +1,2 @@
-export * from './beards/beards.store'
+export * from './bears/bears.store'
 export * from './person/person.store'
