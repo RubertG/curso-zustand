@@ -1,5 +1,6 @@
 import { create, type StateCreator } from "zustand"
 import { persist } from "zustand/middleware"
+import { useWeddingBoundStore } from "../wedding"
 
 interface PersonState {
   firstName: string
@@ -21,12 +22,19 @@ const store: StateCreator<PersonState & Actions, [["zustand/devtools", never]]> 
 
 export const usePersonStore = create<PersonState & Actions>()(
   // devtools(
-    persist(
-      store,
-      {
-        name: 'person-storage',
-        // storage: firebaseStorage
-      }
-    )
+  persist(
+    store,
+    {
+      name: 'person-storage',
+      // storage: firebaseStorage
+    }
+  )
   // )
 )
+
+usePersonStore.subscribe((nextState) => {
+  const { firstName, lastName } = nextState
+
+  useWeddingBoundStore.getState().setFirstName(firstName)
+  useWeddingBoundStore.getState().setLastName(lastName)
+})
